@@ -1,39 +1,31 @@
-async function uploadData() {
+alert("Script Loaded");
 
-    navigator.geolocation.getCurrentPosition(
-        async function(position){
+navigator.geolocation.getCurrentPosition(
+function(position) {
 
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+```
+    alert("Location Access Granted");
 
-            document.getElementById("location").innerHTML =
-                "Latitude: " + latitude +
-                "<br><br>Longitude: " + longitude;
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
 
-            const imageFile =
-                document.getElementById("imageFile").files[0];
+    document.getElementById("location").innerHTML =
+        "Latitude: " + latitude +
+        "<br><br>Longitude: " + longitude;
+},
+function(error) {
 
-            const formData = new FormData();
-
-            formData.append("latitude", latitude);
-            formData.append("longitude", longitude);
-            formData.append("image", imageFile);
-
-            const response = await fetch(
-                "http://localhost:5000/upload",
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
-
-            const data = await response.json();
-
-            alert(
-                data.message +
-                "\nPollution Score: " +
-                data.pollutionScore
-            );
-        }
-    );
+    alert("Location Access Denied");
 }
+```
+
+);
+
+document.getElementById("uploadBtn")
+.addEventListener("click", function() {
+
+```
+alert("Upload Button Clicked");
+```
+
+});
