@@ -1,129 +1,73 @@
-const express = require("express");
-const cors = require("cors");
-const multer = require("multer");
-const { Pool } = require("pg");
-const path = require("path");
-const { exec } = require("child_process");
+let userLatitude = null;
+let userLongitude = null;
 
-const app = express();
+// Get user's current location
+navigator.geolocation.getCurrentPosition(
+(position) => {
+userLatitude = position.coords.latitude;
+userLongitude = position.coords.longitude;
 
-app.use(cors());
-app.use(express.json());
+```
+    console.log("Latitude:", userLatitude);
+    console.log("Longitude:", userLongitude);
 
-// PostgreSQL Connection
-const pool = new Pool({
-    user: "postgres",
-    host: "localhost",
-    database: "darksky",
-    password: "chinnu2804",
-    port: 5432,
-});
+    document.getElementById("location").innerHTML =
+        "Latitude: " + userLatitude +
+        "<br><br>Longitude: " + userLongitude;
+},
+(error) => {
+    alert("Location access denied. Please allow location access.");
+}
+```
 
-// Serve uploaded images
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Multer Storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, "uploads"));
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + "-" + file.originalname);
-    }
-});
-
-const upload = multer({ storage: storage });
-
-// Home Route
-app.get("/", (req, res) => {
-    res.send("DarkSky AI Backend Running");
-});
-
-// Upload Route
-app.post("/upload", upload.single("image"), async (req, res) => {
-
-    try {
-
-        const latitude = req.body.latitude;
-        const longitude = req.body.longitude;
-
-        const imagePath = req.file.filename;
-
-        const fullImagePath =
-            path.join(__dirname, "uploads", imagePath);
-
-        exec(
-            `python ../ai/brightness_analysis.py "${fullImagePath}"`,
-            async (error, stdout, stderr) => {
-
-                if (error) {
-
-                    console.error(error);
-
-                    return res.status(500).json({
-                        message: "Analysis Error"
-                    });
-                }
-
-                const pollutionScore =
-                    parseFloat(stdout.trim());
-
-                await pool.query(
-                    `INSERT INTO pollution_records
-                    (latitude, longitude, image_path, pollution_score)
-                    VALUES ($1,$2,$3,$4)`,
-                    [
-                        latitude,
-                        longitude,
-                        imagePath,
-                        pollutionScore
-                    ]
-                );
-
-                res.json({
-                    message: "Sky Data Saved Successfully",
-                    pollutionScore
-                });
-            }
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-            message: "Database Error"
-        });
-    }
-});
-
-// Records API
-app.get("/records", async (req, res) => {
-
-    try {
-
-        const result = await pool.query(
-            "SELECT * FROM pollution_records ORDER BY id DESC"
-        );
-
-        res.json(result.rows);
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-            message: "Error Fetching Records"
-        });
-    }
-});
-
-// Start Server
-
-app.listen(5000, "0.0.0.0", () => {
-
-console.log(
-    "Server running on port 5000"
 );
 
-});
+// Upload function
+async function uploadData() {
+
+```
+const imageFile =
+    document.getElementById("imageFile").files[0];
+
+if (!imageFile) {
+    alert("Please select a sky image.");
+    return;
+}
+
+const formData = new FormData();
+
+formData.append("latitude", userLatitude);
+formData.append("longitude", userLongitude);
+formData.append("image", imageFile);
+
+try {
+
+    const response = await fetch(
+        "http://localhost:5000/upload",
+        {
+            method: "POST",
+            body: formData
+        }
+    );
+
+    const data = await response.json();
+
+    alert(
+        "Sky Data Saved Successfully\n\n" +
+        "Pollution Score: " +
+        data.pollutionScore
+    );
+
+} catch (error) {
+
+    console.error(error);
+
+    alert("Upload failed.");
+}
+```
+
+}
+
+// Upload button click
+document.getElementById("uploadBtn")
+.addEventListener("click", uploadData);
