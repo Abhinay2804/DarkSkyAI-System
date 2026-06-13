@@ -1,73 +1,43 @@
-let userLatitude = null;
-let userLongitude = null;
+const express = require("express");
+const cors = require("cors");
+const multer = require("multer");
 
-// Get user's current location
-navigator.geolocation.getCurrentPosition(
-(position) => {
-userLatitude = position.coords.latitude;
-userLongitude = position.coords.longitude;
+const app = express();
 
-```
-    console.log("Latitude:", userLatitude);
-    console.log("Longitude:", userLongitude);
+app.use(cors());
 
-    document.getElementById("location").innerHTML =
-        "Latitude: " + userLatitude +
-        "<br><br>Longitude: " + userLongitude;
-},
-(error) => {
-    alert("Location access denied. Please allow location access.");
-}
-```
+const storage = multer.memoryStorage();
 
+const upload = multer({
+    storage: storage
+});
+
+app.post(
+    "/upload",
+    upload.single("image"),
+    (req, res) => {
+
+        const latitude = req.body.latitude;
+        const longitude = req.body.longitude;
+
+        console.log("Latitude:", latitude);
+        console.log("Longitude:", longitude);
+
+        console.log(
+            "Image Name:",
+            req.file.originalname
+        );
+
+        res.json({
+            message: "Sky Data Uploaded Successfully",
+            pollutionScore: 25
+        });
+    }
 );
 
-// Upload function
-async function uploadData() {
+app.listen(5000, () => {
 
-```
-const imageFile =
-    document.getElementById("imageFile").files[0];
-
-if (!imageFile) {
-    alert("Please select a sky image.");
-    return;
-}
-
-const formData = new FormData();
-
-formData.append("latitude", userLatitude);
-formData.append("longitude", userLongitude);
-formData.append("image", imageFile);
-
-try {
-
-    const response = await fetch(
-        "http://localhost:5000/upload",
-        {
-            method: "POST",
-            body: formData
-        }
+    console.log(
+        "Server Running On Port 5000"
     );
-
-    const data = await response.json();
-
-    alert(
-        "Sky Data Saved Successfully\n\n" +
-        "Pollution Score: " +
-        data.pollutionScore
-    );
-
-} catch (error) {
-
-    console.error(error);
-
-    alert("Upload failed.");
-}
-```
-
-}
-
-// Upload button click
-document.getElementById("uploadBtn")
-.addEventListener("click", uploadData);
+});
