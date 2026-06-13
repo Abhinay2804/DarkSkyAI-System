@@ -1,31 +1,27 @@
 alert("Script Loaded");
 
 navigator.geolocation.getCurrentPosition(
-function(position) {
+    function(position) {
 
-```
-    alert("Location Access Granted");
+        alert("Location Access Granted");
 
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
 
-    document.getElementById("location").innerHTML =
-        "Latitude: " + latitude +
-        "<br><br>Longitude: " + longitude;
-},
-function(error) {
+        document.getElementById("location").innerHTML =
+            "Latitude: " + latitude +
+            "<br><br>Longitude: " + longitude;
+    },
+    function(error) {
 
-    alert("Location Access Denied");
-}
-```
-
+        alert("Location Access Denied");
+        console.log(error);
+    }
 );
 
 document.getElementById("uploadBtn")
 .addEventListener("click", function() {
 
-```
-alert("Upload Button Clicked");
-```
+    alert("Upload Button Clicked");
 
 });
