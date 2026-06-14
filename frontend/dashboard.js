@@ -4,10 +4,9 @@ const map = L.map("map").setView(
 );
 
 L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-        attribution:
-            '&copy; OpenStreetMap contributors',
+        attribution: '&copy; OpenStreetMap contributors',
         maxZoom: 19
     }
 ).addTo(map);
