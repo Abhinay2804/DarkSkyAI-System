@@ -1,6 +1,6 @@
 const map = L.map("map").setView(
     [18.0157, 79.5635],
-    13
+    10
 );
 
 L.tileLayer(
@@ -11,6 +11,10 @@ L.tileLayer(
         maxZoom: 19
     }
 ).addTo(map);
+
+setTimeout(() => {
+    map.invalidateSize();
+}, 1000);
 
 async function loadData() {
 
@@ -52,20 +56,26 @@ async function loadData() {
             heatData.push([
                 lat,
                 lng,
-                score / 100
+                Math.max(
+                    score / 100,
+                    0.2
+                )
             ]);
 
             L.marker([lat, lng])
                 .addTo(map)
-                .bindPopup(`
-                    <b>Pollution Score:</b> ${score}<br>
+                .bindPopup(
+                    `<b>Pollution Score:</b> ${score}<br>
                     <b>Latitude:</b> ${lat}<br>
-                    <b>Longitude:</b> ${lng}
-                `);
+                    <b>Longitude:</b> ${lng}`
+                );
 
             totalPollution += score;
 
-            if (score > highestPollution) {
+            if (
+                score >
+                highestPollution
+            ) {
                 highestPollution = score;
             }
 
@@ -121,9 +131,8 @@ async function loadData() {
         L.heatLayer(
             heatData,
             {
-                radius: 10,
-                blur: 8,
-                minOpacity: 0.05,
+                radius: 30,
+                blur: 25,
                 maxZoom: 18,
 
                 gradient: {
@@ -135,29 +144,6 @@ async function loadData() {
                 }
             }
         ).addTo(map);
-
-        const bounds =
-            L.latLngBounds(
-                heatData.map(
-                    point => [
-                        point[0],
-                        point[1]
-                    ]
-                )
-            );
-
-        map.fitBounds(
-            bounds,
-            {
-                padding: [50, 50]
-            }
-        );
-
-        map.setZoom(14);
-
-        setTimeout(() => {
-            map.invalidateSize();
-        }, 500);
 
         const ctx =
             document.getElementById(
