@@ -8,8 +8,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -53,35 +55,6 @@
             border:2px solid black;
             border-radius:10px;
             margin-bottom:30px;
-            background:transparent !important;
-        }
-
-        /* LEAFLET FIXES */
-
-        .leaflet-container{
-            height:100%;
-            width:100%;
-            background:#ddd !important;
-        }
-
-        .leaflet-tile-pane{
-            opacity:1 !important;
-            visibility:visible !important;
-            z-index:200 !important;
-        }
-
-        .leaflet-tile{
-            opacity:1 !important;
-            visibility:visible !important;
-            display:block !important;
-        }
-
-        .leaflet-overlay-pane{
-            z-index:300 !important;
-        }
-
-        .leaflet-marker-pane{
-            z-index:400 !important;
         }
 
         canvas{
@@ -139,7 +112,7 @@
 
     </div>
 
-    <h2>Pollution Heat Map</h2>
+    <h2>Pollution Map</h2>
 
     <div id="map"></div>
 
@@ -162,8 +135,6 @@
     </table>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 
     <script src="dashboard.js"></script>
 

@@ -1,21 +1,16 @@
 const map = L.map("map").setView(
     [18.0157, 79.5635],
-    10
+    8
 );
 
 L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-        attribution: "&copy; OpenStreetMap contributors",
+        attribution:
+            "&copy; OpenStreetMap contributors",
         maxZoom: 19
     }
 ).addTo(map);
-
-window.addEventListener("load", () => {
-    setTimeout(() => {
-        map.invalidateSize(true);
-    }, 1000);
-});
 
 async function loadData() {
 
@@ -30,22 +25,33 @@ async function loadData() {
         console.log("Data:", data);
 
         const table =
-            document.getElementById("dataTable");
+            document.getElementById(
+                "dataTable"
+            );
 
-        let heatData = [];
+        let totalUploads =
+            data.length;
 
-        let totalUploads = data.length;
         let totalPollution = 0;
+
         let highestPollution = 0;
 
         let chartLabels = [];
+
         let chartScores = [];
+
+        let locations = [];
 
         data.forEach(item => {
 
-            const lat = Number(item.latitude);
-            const lng = Number(item.longitude);
-            const score = Number(item.pollution_score);
+            const lat =
+                Number(item.latitude);
+
+            const lng =
+                Number(item.longitude);
+
+            const score =
+                Number(item.pollution_score);
 
             if (
                 isNaN(lat) ||
@@ -55,26 +61,35 @@ async function loadData() {
                 return;
             }
 
-            heatData.push([
+            locations.push([
                 lat,
-                lng,
-                Math.max(score / 100, 0.2)
+                lng
             ]);
 
-            L.marker([lat, lng])
-                .addTo(map)
-                .bindPopup(
-                    `
-                    <b>Pollution Score:</b> ${score}<br>
-                    <b>Latitude:</b> ${lat}<br>
-                    <b>Longitude:</b> ${lng}
-                    `
-                );
+            L.marker([
+                lat,
+                lng
+            ])
+            .addTo(map)
+            .bindPopup(
+                `
+                <b>Pollution Score:</b> ${score}<br>
+                <b>Latitude:</b> ${lat}<br>
+                <b>Longitude:</b> ${lng}<br>
+                <a href="${item.image_url}" target="_blank">
+                    View Image
+                </a>
+                `
+            );
 
             totalPollution += score;
 
-            if (score > highestPollution) {
-                highestPollution = score;
+            if (
+                score >
+                highestPollution
+            ) {
+                highestPollution =
+                    score;
             }
 
             chartLabels.push(
@@ -83,29 +98,37 @@ async function loadData() {
                 ).toLocaleDateString()
             );
 
-            chartScores.push(score);
+            chartScores.push(
+                score
+            );
 
-            const row = table.insertRow();
+            const row =
+                table.insertRow();
 
             row.insertCell(0).innerHTML =
                 item.image_url
-                    ? `<a href="${item.image_url}" target="_blank">View</a>`
-                    : "No Image";
+                ? `<a href="${item.image_url}" target="_blank">View</a>`
+                : "No Image";
 
-            row.insertCell(1).innerHTML = lat;
-            row.insertCell(2).innerHTML = lng;
+            row.insertCell(1).innerHTML =
+                lat;
+
+            row.insertCell(2).innerHTML =
+                lng;
 
             row.insertCell(3).innerHTML =
                 new Date(
                     item.upload_time
                 ).toLocaleString();
 
-            row.insertCell(4).innerHTML = score;
+            row.insertCell(4).innerHTML =
+                score;
         });
 
         document.getElementById(
             "totalUploads"
-        ).innerText = totalUploads;
+        ).innerText =
+            totalUploads;
 
         document.getElementById(
             "avgPollution"
@@ -122,34 +145,20 @@ async function loadData() {
         ).innerText =
             highestPollution;
 
-        if (heatData.length > 0) {
+        if (
+            locations.length > 0
+        ) {
 
-            L.heatLayer(
-                heatData,
-                {
-                    radius: 25,
-                    blur: 20,
-                    maxZoom: 18,
-                    gradient: {
-                        0.2: "blue",
-                        0.4: "lime",
-                        0.6: "yellow",
-                        0.8: "orange",
-                        1.0: "red"
-                    }
-                }
-            ).addTo(map);
-
-            const bounds = L.latLngBounds(
-                heatData.map(
-                    point => [point[0], point[1]]
-                )
-            );
+            const bounds =
+                L.latLngBounds(
+                    locations
+                );
 
             map.fitBounds(
                 bounds,
                 {
-                    padding: [50, 50]
+                    padding:
+                    [50, 50]
                 }
             );
         }
@@ -160,31 +169,46 @@ async function loadData() {
             );
 
         new Chart(ctx, {
+
             type: "line",
+
             data: {
-                labels: chartLabels,
+
+                labels:
+                    chartLabels,
+
                 datasets: [
+
                     {
+
                         label:
                             "Pollution Score",
+
                         data:
                             chartScores,
+
                         borderWidth: 3,
+
                         tension: 0.3
+
                     }
+
                 ]
+
             },
+
             options: {
+
                 responsive: true,
+
                 maintainAspectRatio: false
+
             }
+
         });
 
-        setTimeout(() => {
-            map.invalidateSize(true);
-        }, 2000);
-
-    } catch (error) {
+    }
+    catch(error) {
 
         console.error(
             "Dashboard Error:",
@@ -194,4 +218,3 @@ async function loadData() {
 }
 
 loadData();
-
