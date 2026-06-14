@@ -4,18 +4,28 @@ const map = L.map("map").setView(
 );
 
 L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
         attribution:
-            '&copy; OpenStreetMap contributors & CartoDB',
-        subdomains: 'abcd',
-        maxZoom: 20
+            '&copy; OpenStreetMap contributors',
+        maxZoom: 19
     }
 ).addTo(map);
 
-setTimeout(() => {
-    map.invalidateSize();
-}, 1000);
+window.addEventListener("load", () => {
+
+    setTimeout(() => {
+
+        map.invalidateSize(true);
+
+        map.setView(
+            [18.0157, 79.5635],
+            10
+        );
+
+    }, 500);
+
+});
 
 async function loadData() {
 
@@ -73,10 +83,7 @@ async function loadData() {
 
             totalPollution += score;
 
-            if (
-                score >
-                highestPollution
-            ) {
+            if (score > highestPollution) {
                 highestPollution = score;
             }
 
@@ -135,7 +142,6 @@ async function loadData() {
                 radius: 30,
                 blur: 25,
                 maxZoom: 18,
-
                 gradient: {
                     0.2: "blue",
                     0.4: "lime",
@@ -181,3 +187,4 @@ async function loadData() {
 }
 
 loadData();
+
