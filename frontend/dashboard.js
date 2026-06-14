@@ -12,142 +12,172 @@ attribution: "© OpenStreetMap"
 
 async function loadData() {
 
-```
-const response = await fetch(
-    "https://darkskyai-system.onrender.com/uploads"
-);
 
-const data = await response.json();
+try {
 
-const table =
-    document.getElementById(
-        "dataTable"
+    const response = await fetch(
+        "https://darkskyai-system.onrender.com/uploads"
     );
 
-let heatData = [];
+    const data = await response.json();
 
-let totalUploads = data.length;
-let totalPollution = 0;
-let highestPollution = 0;
+    const table =
+        document.getElementById(
+            "dataTable"
+        );
 
-let chartLabels = [];
-let chartScores = [];
+    let heatData = [];
 
-data.forEach(item => {
+    let totalUploads = data.length;
+    let totalPollution = 0;
+    let highestPollution = 0;
 
-    heatData.push([
-        parseFloat(item.latitude),
-        parseFloat(item.longitude),
-        item.pollution_score / 100
-    ]);
+    let chartLabels = [];
+    let chartScores = [];
 
-    totalPollution += item.pollution_score;
+    data.forEach(item => {
 
-    if (
-        item.pollution_score >
-        highestPollution
-    ) {
-        highestPollution =
-            item.pollution_score;
-    }
+        heatData.push([
+Number(item.latitude),
+Number(item.longitude),
+Math.max(
+Number(item.pollution_score) / 50,
+0.5
+)
+]);
 
-    chartLabels.push(
-        new Date(
-            item.upload_time
-        ).toLocaleDateString()
-    );
 
-    chartScores.push(
-        item.pollution_score
-    );
+        totalPollution +=
+            Number(item.pollution_score);
 
-    const row =
-        table.insertRow();
-
-    row.insertCell(0).innerHTML =
-        item.image_url;
-
-    row.insertCell(1).innerHTML =
-        item.latitude;
-
-    row.insertCell(2).innerHTML =
-        item.longitude;
-
-    row.insertCell(3).innerHTML =
-        new Date(
-            item.upload_time
-        ).toLocaleString();
-
-    row.insertCell(4).innerHTML =
-        item.pollution_score;
-});
-
-document.getElementById(
-    "totalUploads"
-).innerText =
-    totalUploads;
-
-document.getElementById(
-    "avgPollution"
-).innerText =
-    (
-        totalPollution /
-        totalUploads
-    ).toFixed(2);
-
-document.getElementById(
-    "highestPollution"
-).innerText =
-    highestPollution;
-
-const heatLayer =
-    L.heatLayer(
-        heatData,
-        {
-            radius: 40,
-            blur: 25,
-            maxZoom: 18,
-            minOpacity: 0.5
+        if (
+            Number(item.pollution_score) >
+            highestPollution
+        ) {
+            highestPollution =
+                Number(item.pollution_score);
         }
-    ).addTo(map);
 
-const bounds =
-    heatData.map(
-        point => [
-            point[0],
-            point[1]
-        ]
-    );
+        chartLabels.push(
+            new Date(
+                item.upload_time
+            ).toLocaleDateString()
+        );
 
-if(bounds.length > 0){
-    map.fitBounds(bounds);
+        chartScores.push(
+            Number(item.pollution_score)
+        );
+
+        const row =
+            table.insertRow();
+
+        row.insertCell(0).innerHTML =
+            item.image_url;
+
+        row.insertCell(1).innerHTML =
+            item.latitude;
+
+        row.insertCell(2).innerHTML =
+            item.longitude;
+
+        row.insertCell(3).innerHTML =
+            new Date(
+                item.upload_time
+            ).toLocaleString();
+
+        row.insertCell(4).innerHTML =
+            item.pollution_score;
+    });
+
+    document.getElementById(
+        "totalUploads"
+    ).innerText =
+        totalUploads;
+
+    document.getElementById(
+        "avgPollution"
+    ).innerText =
+        totalUploads > 0
+        ? (
+            totalPollution /
+            totalUploads
+        ).toFixed(2)
+        : 0;
+
+    document.getElementById(
+        "highestPollution"
+    ).innerText =
+        highestPollution;
+
+    if (heatData.length > 0) {
+
+        L.heatLayer(
+heatData,
+{
+radius: 120,
+blur: 70,
+maxZoom: 20,
+minOpacity: 0.9,
+
+
+    gradient: {
+        0.1: "blue",
+        0.3: "cyan",
+        0.5: "lime",
+        0.7: "yellow",
+        0.9: "orange",
+        1.0: "red"
+    }
 }
 
-const ctx =
-    document.getElementById(
-        "pollutionChart"
-    );
 
-new Chart(ctx, {
-    type: "line",
-    data: {
-        labels: chartLabels,
-        datasets: [
-            {
-                label:
-                    "Pollution Score",
-                data:
-                    chartScores,
-                borderWidth: 3,
-                fill: false
-            }
-        ]
-    },
-    options: {
-        responsive: true
+).addTo(map);
+
+
+        const bounds =
+            heatData.map(
+                point => [
+                    point[0],
+                    point[1]
+                ]
+            );
+
+        map.fitBounds(bounds);
     }
-});
-```
+
+    const ctx =
+        document.getElementById(
+            "pollutionChart"
+        );
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: chartLabels,
+            datasets: [
+                {
+                    label:
+                        "Pollution Score",
+                    data:
+                        chartScores,
+                    borderWidth: 3,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true
+        }
+    });
+
+} catch(error) {
+
+    console.error(
+        "Dashboard Error:",
+        error
+    );
+}
+
 
 }
 
