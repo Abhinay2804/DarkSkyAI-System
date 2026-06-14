@@ -1,110 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>DarkSky AI Dashboard</title>
 
-    <link rel="stylesheet"
-    href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-
-        body{
-            font-family: Arial;
-            margin:20px;
-        }
-
-        .cards{
-            display:flex;
-            gap:20px;
-            margin-bottom:20px;
-        }
-
-        .card{
-            padding:20px;
-            border:1px solid black;
-            border-radius:10px;
-            width:220px;
-            text-align:center;
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:20px;
-        }
-
-        table,th,td{
-            border:1px solid black;
-        }
-
-        th,td{
-            padding:10px;
-        }
-
-        #map{
-            height:500px;
-            margin-top:30px;
-        }
-
-        canvas{
-            margin-top:30px;
-        }
-
-    </style>
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet/dist/leaflet.css"
+    >
 
 </head>
-
 <body>
 
-<h1>DarkSky AI Dashboard</h1>
+    <h1>DarkSky AI Dashboard</h1>
 
-<div class="cards">
+    <h2>Pollution Heat Map</h2>
 
-    <div class="card">
-        <h3>Total Uploads</h3>
-        <h2 id="totalUploads">0</h2>
-    </div>
+    <div
+        id="map"
+        style="height:500px;width:100%;"
+    ></div>
 
-    <div class="card">
-        <h3>Average Pollution</h3>
-        <h2 id="avgPollution">0</h2>
-    </div>
+    <br>
 
-    <div class="card">
-        <h3>Today's Uploads</h3>
-        <h2 id="todayUploads">0</h2>
-    </div>
+    <table
+        border="1"
+        id="dataTable"
+    >
+        <tr>
+            <th>Photo</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Upload Time</th>
+            <th>Pollution Score</th>
+        </tr>
+    </table>
 
-</div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-<h2>Upload Records</h2>
-
-<table id="dataTable">
-
-<tr>
-    <th>Photo</th>
-    <th>Latitude</th>
-    <th>Longitude</th>
-    <th>Upload Time</th>
-    <th>Pollution Score</th>
-</tr>
-
-</table>
-
-<h2>Pollution Map</h2>
-
-<div id="map"></div>
-
-<h2>Pollution Analytics</h2>
-
-<canvas id="pollutionChart"></canvas>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<script src="dashboard.js"></script>
+    <script src="dashboard.js"></script>
 
 </body>
 </html>
-
