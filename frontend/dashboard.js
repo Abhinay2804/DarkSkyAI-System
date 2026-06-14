@@ -6,25 +6,15 @@ const map = L.map("map").setView(
 L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-        attribution:
-            '&copy; OpenStreetMap contributors',
+        attribution: "&copy; OpenStreetMap contributors",
         maxZoom: 19
     }
 ).addTo(map);
 
 window.addEventListener("load", () => {
-
     setTimeout(() => {
-
         map.invalidateSize(true);
-
-        map.setView(
-            [18.0157, 79.5635],
-            10
-        );
-
-    }, 500);
-
+    }, 1000);
 });
 
 async function loadData() {
@@ -40,9 +30,7 @@ async function loadData() {
         console.log("Data:", data);
 
         const table =
-            document.getElementById(
-                "dataTable"
-            );
+            document.getElementById("dataTable");
 
         let heatData = [];
 
@@ -55,30 +43,32 @@ async function loadData() {
 
         data.forEach(item => {
 
-            const lat =
-                Number(item.latitude);
+            const lat = Number(item.latitude);
+            const lng = Number(item.longitude);
+            const score = Number(item.pollution_score);
 
-            const lng =
-                Number(item.longitude);
-
-            const score =
-                Number(item.pollution_score);
+            if (
+                isNaN(lat) ||
+                isNaN(lng) ||
+                isNaN(score)
+            ) {
+                return;
+            }
 
             heatData.push([
                 lat,
                 lng,
-                Math.max(
-                    score / 100,
-                    0.2
-                )
+                Math.max(score / 100, 0.2)
             ]);
 
             L.marker([lat, lng])
                 .addTo(map)
                 .bindPopup(
-                    `<b>Pollution Score:</b> ${score}<br>
+                    `
+                    <b>Pollution Score:</b> ${score}<br>
                     <b>Latitude:</b> ${lat}<br>
-                    <b>Longitude:</b> ${lng}`
+                    <b>Longitude:</b> ${lng}
+                    `
                 );
 
             totalPollution += score;
@@ -95,31 +85,27 @@ async function loadData() {
 
             chartScores.push(score);
 
-            const row =
-                table.insertRow();
+            const row = table.insertRow();
 
             row.insertCell(0).innerHTML =
-                item.image_url;
+                item.image_url
+                    ? `<a href="${item.image_url}" target="_blank">View</a>`
+                    : "No Image";
 
-            row.insertCell(1).innerHTML =
-                lat;
-
-            row.insertCell(2).innerHTML =
-                lng;
+            row.insertCell(1).innerHTML = lat;
+            row.insertCell(2).innerHTML = lng;
 
             row.insertCell(3).innerHTML =
                 new Date(
                     item.upload_time
                 ).toLocaleString();
 
-            row.insertCell(4).innerHTML =
-                score;
+            row.insertCell(4).innerHTML = score;
         });
 
         document.getElementById(
             "totalUploads"
-        ).innerText =
-            totalUploads;
+        ).innerText = totalUploads;
 
         document.getElementById(
             "avgPollution"
@@ -129,30 +115,44 @@ async function loadData() {
                 totalPollution /
                 totalUploads
             ).toFixed(2)
-            : 0;
+            : "0";
 
         document.getElementById(
             "highestPollution"
         ).innerText =
             highestPollution;
 
-        L.heatLayer(
-    heatData,
-    {
-        radius: 15,
-        blur: 10,
-        maxZoom: 18,
-        minOpacity: 0.2,
+        if (heatData.length > 0) {
 
-        gradient: {
-            0.2: "blue",
-            0.4: "lime",
-            0.6: "yellow",
-            0.8: "orange",
-            1.0: "red"
+            L.heatLayer(
+                heatData,
+                {
+                    radius: 25,
+                    blur: 20,
+                    maxZoom: 18,
+                    gradient: {
+                        0.2: "blue",
+                        0.4: "lime",
+                        0.6: "yellow",
+                        0.8: "orange",
+                        1.0: "red"
+                    }
+                }
+            ).addTo(map);
+
+            const bounds = L.latLngBounds(
+                heatData.map(
+                    point => [point[0], point[1]]
+                )
+            );
+
+            map.fitBounds(
+                bounds,
+                {
+                    padding: [50, 50]
+                }
+            );
         }
-    }
-).addTo(map);
 
         const ctx =
             document.getElementById(
@@ -175,11 +175,16 @@ async function loadData() {
                 ]
             },
             options: {
-                responsive: true
+                responsive: true,
+                maintainAspectRatio: false
             }
         });
 
-    } catch(error) {
+        setTimeout(() => {
+            map.invalidateSize(true);
+        }, 2000);
+
+    } catch (error) {
 
         console.error(
             "Dashboard Error:",

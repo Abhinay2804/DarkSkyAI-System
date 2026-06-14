@@ -8,10 +8,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+    <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -50,14 +48,40 @@
         }
 
         #map{
-            width:100%;
             height:700px;
-            min-height:700px;
-            display:block;
+            width:100%;
             border:2px solid black;
             border-radius:10px;
             margin-bottom:30px;
-            background:#eaeaea;
+            background:transparent !important;
+        }
+
+        /* LEAFLET FIXES */
+
+        .leaflet-container{
+            height:100%;
+            width:100%;
+            background:#ddd !important;
+        }
+
+        .leaflet-tile-pane{
+            opacity:1 !important;
+            visibility:visible !important;
+            z-index:200 !important;
+        }
+
+        .leaflet-tile{
+            opacity:1 !important;
+            visibility:visible !important;
+            display:block !important;
+        }
+
+        .leaflet-overlay-pane{
+            z-index:300 !important;
+        }
+
+        .leaflet-marker-pane{
+            z-index:400 !important;
         }
 
         canvas{
@@ -126,6 +150,7 @@
     <h2>Upload Records</h2>
 
     <table id="dataTable">
+
         <tr>
             <th>Photo</th>
             <th>Latitude</th>
@@ -133,6 +158,7 @@
             <th>Upload Time</th>
             <th>Pollution Score</th>
         </tr>
+
     </table>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -144,4 +170,3 @@
 </body>
 
 </html>
-
