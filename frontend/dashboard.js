@@ -137,20 +137,22 @@ async function loadData() {
             highestPollution;
 
         L.heatLayer(
-            heatData,
-            {
-                radius: 30,
-                blur: 25,
-                maxZoom: 18,
-                gradient: {
-                    0.2: "blue",
-                    0.4: "lime",
-                    0.6: "yellow",
-                    0.8: "orange",
-                    1.0: "red"
-                }
-            }
-        ).addTo(map);
+    heatData,
+    {
+        radius: 15,
+        blur: 10,
+        maxZoom: 18,
+        minOpacity: 0.2,
+
+        gradient: {
+            0.2: "blue",
+            0.4: "lime",
+            0.6: "yellow",
+            0.8: "orange",
+            1.0: "red"
+        }
+    }
+).addTo(map);
 
         const ctx =
             document.getElementById(
