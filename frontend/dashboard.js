@@ -4,10 +4,12 @@ const map = L.map("map").setView(
 );
 
 L.tileLayer(
-    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
     {
-        attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 19
+        attribution:
+            '&copy; OpenStreetMap contributors & CartoDB',
+        subdomains: 'abcd',
+        maxZoom: 20
     }
 ).addTo(map);
 
