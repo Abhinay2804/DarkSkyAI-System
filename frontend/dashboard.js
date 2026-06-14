@@ -1,4 +1,4 @@
-```javascript
+
 async function loadData() {
 
     const response = await fetch(
@@ -114,4 +114,4 @@ async function loadData() {
 }
 
 loadData();
-```
+
