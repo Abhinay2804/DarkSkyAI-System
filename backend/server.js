@@ -52,7 +52,9 @@ app.post(
             );
 
             const pollutionScore =
-                aiResponse.data.pollutionScore;
+    Math.round(
+        aiResponse.data.pollutionScore
+    );
 
             await pool.query(
                 `
