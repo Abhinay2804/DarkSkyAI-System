@@ -35,7 +35,24 @@ app.post(
             const imageName =
                 req.file.originalname;
 
-            const pollutionScore = 25;
+            const formData = new FormData();
+
+            formData.append(
+                "image",
+                req.file.buffer,
+                req.file.originalname
+            );
+
+            const aiResponse = await axios.post(
+                "https://darkskyai-ai.onrender.com/predict",
+                formData,
+                {
+                    headers: formData.getHeaders()
+                }
+            );
+
+            const pollutionScore =
+                aiResponse.data.pollutionScore;
 
             await pool.query(
                 `
@@ -70,10 +87,17 @@ app.post(
 
         } catch (error) {
 
-            console.error(error);
+            console.error("FULL ERROR:", error);
+
+            if (error.response) {
+                console.error(
+                    "AI RESPONSE:",
+                    error.response.data
+                );
+            }
 
             res.status(500).json({
-                error: "Database Error"
+                error: error.message
             });
         }
     }
@@ -96,10 +120,10 @@ app.get("/uploads", async (req, res) => {
 
     } catch (error) {
 
-        console.error(error);
+        console.error("FULL ERROR:", error);
 
         res.status(500).json({
-            error: "Database Error"
+            error: error.message
         });
     }
 });
