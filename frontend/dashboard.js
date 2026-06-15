@@ -29,6 +29,9 @@ async function loadData() {
 
         console.log("Data:", data);
 
+        const table =
+            document.getElementById("dataTable");
+
         let totalUploads = data.length;
         let totalPollution = 0;
         let highestPollution = 0;
@@ -80,6 +83,26 @@ async function loadData() {
 
             chartScores.push(score);
 
+            const row = table.insertRow();
+
+            row.insertCell(0).innerHTML = lat;
+
+            row.insertCell(1).innerHTML = lng;
+
+            row.insertCell(2).innerHTML =
+                new Date(
+                    item.upload_time
+                ).toLocaleString();
+
+            row.insertCell(3).innerHTML =
+                score;
+
+            row.insertCell(4).innerHTML =
+                item.aqi ?? "N/A";
+
+            row.insertCell(5).innerHTML =
+                item.pm25 ?? "N/A";
+
         });
 
         document.getElementById(
@@ -120,28 +143,24 @@ async function loadData() {
                 "pollutionChart"
             );
 
-        if (ctx) {
-
-            new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: chartLabels,
-                    datasets: [
-                        {
-                            label: "Pollution Score",
-                            data: chartScores,
-                            borderWidth: 3,
-                            tension: 0.3
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-        }
+        new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: chartLabels,
+                datasets: [
+                    {
+                        label: "Pollution Score",
+                        data: chartScores,
+                        borderWidth: 3,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
 
         setTimeout(() => {
             map.invalidateSize(true);
