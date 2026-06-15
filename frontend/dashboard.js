@@ -87,10 +87,7 @@ try {
         const row = table.insertRow();
 
         const imageUrl =
-            item.image_url &&
-            item.image_url.startsWith("http")
-            ? item.image_url
-            : `https://darkskyai-system.onrender.com/uploads/${item.image_url}`;
+    item.image_url;
 
         row.insertCell(0).innerHTML =
             item.image_url
