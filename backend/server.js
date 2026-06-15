@@ -71,7 +71,7 @@ async (req, res) => {
 
         const imageName =
     req.file.path;
-    console.log("FILE DATA:", req.file);
+    console.log("FILE PATH:", req.file.path);
 
         const aqiResponse = await axios.get(
             `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${process.env.OPENWEATHER_API_KEY}`
