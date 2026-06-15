@@ -1,3 +1,27 @@
+const express = require("express");
+const cors = require("cors");
+const multer = require("multer");
+const { Pool } = require("pg");
+const axios = require("axios");
+const FormData = require("form-data");
+
+const app = express();
+
+app.use(cors());
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
+
+const storage = multer.memoryStorage();
+
+const upload = multer({
+    storage: storage
+});
+
 app.post(
     "/upload",
     upload.single("image"),
@@ -35,8 +59,7 @@ app.post(
 
                 pollutionScore =
                     Math.round(
-                        aiResponse.data
-                            .pollutionScore
+                        aiResponse.data.pollutionScore
                     );
 
             } catch (err) {
@@ -92,3 +115,41 @@ app.post(
         }
     }
 );
+
+app.get("/uploads", async (req, res) => {
+
+    try {
+
+        const result =
+            await pool.query(
+                `
+                SELECT *
+                FROM sky_uploads
+                ORDER BY upload_time DESC
+                `
+            );
+
+        res.json(result.rows);
+
+    } catch (error) {
+
+        console.error(
+            "FULL ERROR:",
+            error
+        );
+
+        res.status(500).json({
+            error: error.message
+        });
+    }
+});
+
+const PORT =
+    process.env.PORT || 10000;
+
+app.listen(PORT, () => {
+
+    console.log(
+        `Server Running On Port ${PORT}`
+    );
+});
