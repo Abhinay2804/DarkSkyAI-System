@@ -1,160 +1,167 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
 
-    <title>DarkSky AI Dashboard</title>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DarkSky AI Dashboard</title>
 
-    <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        body{
-            font-family: Arial, sans-serif;
-            margin:20px;
-            background:#f5f5f5;
-        }
+<style>
 
-        h1,h2{
-            text-align:center;
-        }
+    body{
+        font-family: Arial, sans-serif;
+        margin:20px;
+        background:#f5f5f5;
+    }
 
-        .stats-container{
-            display:flex;
-            justify-content:center;
-            gap:20px;
-            flex-wrap:wrap;
-            margin-bottom:20px;
-        }
+    h1,h2{
+        text-align:center;
+    }
 
-        .card{
-            background:white;
-            padding:20px;
-            border-radius:10px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.2);
-            width:320px;
-            text-align:center;
-        }
+    .stats-container{
+        display:flex;
+        justify-content:center;
+        gap:20px;
+        flex-wrap:wrap;
+        margin-bottom:20px;
+    }
 
-        .card p{
-            font-size:28px;
-            font-weight:bold;
-        }
+    .card{
+        background:white;
+        padding:20px;
+        border-radius:10px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2);
+        width:320px;
+        text-align:center;
+    }
 
-        #map{
-            height:500px;
-            width:100%;
-            border:2px solid black;
-            border-radius:10px;
-            margin-bottom:30px;
-        }
+    .card p{
+        font-size:28px;
+        font-weight:bold;
+    }
 
-        .chart-container{
-            width:100%;
-            height:400px;
-            background:white;
-            padding:20px;
-            border-radius:10px;
-            margin-bottom:30px;
-            box-sizing:border-box;
-        }
+    #map{
+        height:500px;
+        width:100%;
+        border:2px solid black;
+        border-radius:10px;
+        margin-bottom:30px;
+    }
 
-        #pollutionChart{
-            width:100% !important;
-            height:100% !important;
-        }
+    .chart-container{
+        width:100%;
+        height:400px;
+        background:white;
+        padding:20px;
+        border-radius:10px;
+        margin-bottom:30px;
+        box-sizing:border-box;
+    }
 
-        canvas{
-            background:white;
-            border-radius:10px;
-        }
+    #pollutionChart{
+        width:100% !important;
+        height:100% !important;
+    }
 
-        table{
-            width:100%;
-            border-collapse:collapse;
-            background:white;
-        }
+    canvas{
+        background:white;
+        border-radius:10px;
+    }
 
-        th,td{
-            border:1px solid #ccc;
-            padding:10px;
-            text-align:center;
-        }
+    table{
+        width:100%;
+        border-collapse:collapse;
+        background:white;
+    }
 
-        th{
-            background:#222;
-            color:white;
-        }
+    th,td{
+        border:1px solid #ccc;
+        padding:10px;
+        text-align:center;
+    }
 
-        tr:nth-child(even){
-            background:#f2f2f2;
-        }
+    th{
+        background:#222;
+        color:white;
+    }
 
-        a{
-            color:blue;
-            text-decoration:none;
-        }
+    tr:nth-child(even){
+        background:#f2f2f2;
+    }
 
-    </style>
+    a{
+        color:blue;
+        text-decoration:none;
+    }
+
+</style>
+
 
 </head>
 
 <body>
 
-    <h1>DarkSky AI Dashboard</h1>
 
-    <div class="stats-container">
+<h1>DarkSky AI Dashboard</h1>
 
-        <div class="card">
-            <h3>Total Uploads</h3>
-            <p id="totalUploads">0</p>
-        </div>
+<div class="stats-container">
 
-        <div class="card">
-            <h3>Average Pollution</h3>
-            <p id="avgPollution">0</p>
-        </div>
-
-        <div class="card">
-            <h3>Highest Pollution</h3>
-            <p id="highestPollution">0</p>
-        </div>
-
+    <div class="card">
+        <h3>Total Uploads</h3>
+        <p id="totalUploads">0</p>
     </div>
 
-    <h2>Pollution Map</h2>
-
-    <div id="map"></div>
-
-    <h2>Pollution Trend</h2>
-
-    <div class="chart-container">
-        <canvas id="pollutionChart"></canvas>
+    <div class="card">
+        <h3>Average Pollution</h3>
+        <p id="avgPollution">0</p>
     </div>
 
-    <h2>Upload Records</h2>
+    <div class="card">
+        <h3>Highest Pollution</h3>
+        <p id="highestPollution">0</p>
+    </div>
 
-    <table id="dataTable">
+</div>
 
-        <tr>
-            <th>Photo</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Upload Time</th>
-            <th>Pollution Score</th>
-        </tr>
+<h2>Pollution Map</h2>
 
-    </table>
+<div id="map"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<h2>Pollution Trend</h2>
 
-    <script src="dashboard.js"></script>
+<div class="chart-container">
+    <canvas id="pollutionChart"></canvas>
+</div>
+
+<h2>Upload Records</h2>
+
+<table id="dataTable">
+
+    <tr>
+        <th>Photo</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Upload Time</th>
+        <th>Pollution Score</th>
+        <th>AQI</th>
+        <th>PM2.5</th>
+    </tr>
+
+</table>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="dashboard.js"></script>
+
 
 </body>
 
