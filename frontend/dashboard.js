@@ -29,6 +29,9 @@ async function loadData() {
 
         console.log("Data:", data);
 
+        const table =
+            document.getElementById("dataTable");
+
         let totalUploads = data.length;
         let totalPollution = 0;
         let highestPollution = 0;
@@ -44,24 +47,24 @@ async function loadData() {
             const lng = Number(item.longitude);
             const score = Number(item.pollution_score);
 
-            let status;
-
-if (score <= 15) {
-    status = "Good";
-}
-else if (score <= 35) {
-    status = "Moderate";
-}
-else {
-    status = "High";
-}
-
             if (
                 isNaN(lat) ||
                 isNaN(lng) ||
                 isNaN(score)
             ) {
                 return;
+            }
+
+            let status;
+
+            if (score <= 15) {
+                status = "Good";
+            }
+            else if (score <= 35) {
+                status = "Moderate";
+            }
+            else {
+                status = "High";
             }
 
             markerPoints.push([lat, lng]);
@@ -71,6 +74,7 @@ else {
                 .bindPopup(
                     `
                     <b>Pollution Score:</b> ${score}<br>
+                    <b>Status:</b> ${status}<br>
                     <b>AQI:</b> ${item.aqi ?? "N/A"}<br>
                     <b>PM2.5:</b> ${item.pm25 ?? "N/A"}<br>
                     <b>Latitude:</b> ${lat}<br>
@@ -92,34 +96,29 @@ else {
 
             chartScores.push(score);
 
-const table =
-    document.getElementById("dataTable");
+            const row = table.insertRow();
 
-const row = table.insertRow();
+            row.insertCell(0).innerHTML = lat;
+            row.insertCell(1).innerHTML = lng;
 
-row.insertCell(0).innerHTML = lat;
+            row.insertCell(2).innerHTML =
+                new Date(
+                    item.upload_time
+                ).toLocaleString();
 
-row.insertCell(1).innerHTML = lng;
+            row.insertCell(3).innerHTML =
+                score;
 
-row.insertCell(2).innerHTML =
-    new Date(
-        item.upload_time
-    ).toLocaleString();
+            row.insertCell(4).innerHTML =
+                item.aqi ?? "N/A";
 
-row.insertCell(3).innerHTML =
-    score;
+            row.insertCell(5).innerHTML =
+                item.pm25 ?? "N/A";
 
-row.insertCell(4).innerHTML =
-    item.aqi ?? "N/A";
+            row.insertCell(6).innerHTML =
+                status;
 
-row.insertCell(5).innerHTML =
-    item.pm25 ?? "N/A";
-
-row.insertCell(6).innerHTML =
-    status;
-
-});
-
+        });
 
         document.getElementById(
             "totalUploads"
@@ -129,11 +128,11 @@ row.insertCell(6).innerHTML =
             "avgPollution"
         ).innerText =
             totalUploads > 0
-            ? (
-                totalPollution /
-                totalUploads
-            ).toFixed(2)
-            : "0";
+                ? (
+                    totalPollution /
+                    totalUploads
+                ).toFixed(2)
+                : "0";
 
         document.getElementById(
             "highestPollution"
@@ -142,9 +141,10 @@ row.insertCell(6).innerHTML =
 
         if (markerPoints.length > 0) {
 
-            const bounds = L.latLngBounds(
-                markerPoints
-            );
+            const bounds =
+                L.latLngBounds(
+                    markerPoints
+                );
 
             map.fitBounds(
                 bounds,
@@ -186,7 +186,8 @@ row.insertCell(6).innerHTML =
             map.invalidateSize(true);
         }, 2000);
 
-    } catch (error) {
+    }
+    catch (error) {
 
         console.error(
             "Dashboard Error:",
