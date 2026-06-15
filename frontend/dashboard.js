@@ -120,7 +120,6 @@ row.insertCell(6).innerHTML =
 
 });
 
-        });
 
         document.getElementById(
             "totalUploads"
