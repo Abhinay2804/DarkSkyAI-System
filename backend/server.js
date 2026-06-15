@@ -3,10 +3,18 @@ const cors = require("cors");
 const multer = require("multer");
 const { Pool } = require("pg");
 const axios = require("axios");
+const path = require("path");
 
 const app = express();
 
 app.use(cors());
+
+app.use(
+    "/uploads",
+    express.static(
+        path.join(__dirname, "uploads")
+    )
+);
 
 const pool = new Pool({
 connectionString: process.env.DATABASE_URL,
