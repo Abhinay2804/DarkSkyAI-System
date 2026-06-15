@@ -23,10 +23,33 @@ rejectUnauthorized: false
 }
 });
 
-const storage = multer.memoryStorage();
+const storage = multer.diskStorage({
+
+    destination: function (req, file, cb) {
+
+        cb(
+            null,
+            path.join(
+                __dirname,
+                "uploads"
+            )
+        );
+    },
+
+    filename: function (req, file, cb) {
+
+        cb(
+            null,
+            Date.now() +
+            "-" +
+            file.originalname
+        );
+    }
+
+});
 
 const upload = multer({
-storage: storage
+    storage: storage
 });
 
 app.post(
@@ -41,7 +64,7 @@ async (req, res) => {
         const longitude = req.body.longitude;
 
         const imageName =
-            req.file.originalname;
+    req.file.filename;
 
         const aqiResponse = await axios.get(
             `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${process.env.OPENWEATHER_API_KEY}`
