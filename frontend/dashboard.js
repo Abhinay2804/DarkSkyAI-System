@@ -86,13 +86,25 @@ try {
 
         const row = table.insertRow();
 
-        const imageUrl =
-    item.image_url;
+        const row = table.insertRow();
 
-        row.insertCell(0).innerHTML =
-            item.image_url
-            ? `<a href="${imageUrl}" target="_blank">View</a>`
-            : "No Image";
+row.insertCell(0).innerHTML = lat;
+
+row.insertCell(1).innerHTML = lng;
+
+row.insertCell(2).innerHTML =
+    new Date(
+        item.upload_time
+    ).toLocaleString();
+
+row.insertCell(3).innerHTML =
+    score;
+
+row.insertCell(4).innerHTML =
+    item.aqi ?? "N/A";
+
+row.insertCell(5).innerHTML =
+    item.pm25 ?? "N/A";
 
         row.insertCell(1).innerHTML = lat;
         row.insertCell(2).innerHTML = lng;
