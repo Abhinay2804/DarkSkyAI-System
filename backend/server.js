@@ -1,20 +1,20 @@
+const { CloudinaryStorage } =
+    require("multer-storage-cloudinary");
+
+const cloudinary =
+    require("cloudinary").v2;
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const { Pool } = require("pg");
 const axios = require("axios");
-const path = require("path");
+
 
 const app = express();
 
 app.use(cors());
 
-app.use(
-    "/uploads",
-    express.static(
-        path.join(__dirname, "uploads")
-    )
-);
+
 
 const pool = new Pool({
 connectionString: process.env.DATABASE_URL,
@@ -23,30 +23,35 @@ rejectUnauthorized: false
 }
 });
 
-const storage = multer.diskStorage({
+cloudinary.config({
 
-    destination: function (req, file, cb) {
+    cloud_name:
+        process.env.CLOUDINARY_CLOUD_NAME,
 
-        cb(
-            null,
-            path.join(
-                __dirname,
-                "uploads"
-            )
-        );
-    },
+    api_key:
+        process.env.CLOUDINARY_API_KEY,
 
-    filename: function (req, file, cb) {
-
-        cb(
-            null,
-            Date.now() +
-            "-" +
-            file.originalname
-        );
-    }
-
+    api_secret:
+        process.env.CLOUDINARY_API_SECRET
 });
+
+const storage =
+    new CloudinaryStorage({
+
+        cloudinary: cloudinary,
+
+        params: {
+
+            folder:
+                "darkskyai",
+
+            allowed_formats: [
+                "jpg",
+                "jpeg",
+                "png"
+            ]
+        }
+    });
 
 const upload = multer({
     storage: storage
@@ -65,7 +70,7 @@ async (req, res) => {
         const longitude = req.body.longitude;
 
         const imageName =
-    req.file.filename;
+    req.file.path;
 
         const aqiResponse = await axios.get(
             `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${process.env.OPENWEATHER_API_KEY}`
