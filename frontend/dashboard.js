@@ -86,8 +86,6 @@ try {
 
         const row = table.insertRow();
 
-        const row = table.insertRow();
-
 row.insertCell(0).innerHTML = lat;
 
 row.insertCell(1).innerHTML = lng;
