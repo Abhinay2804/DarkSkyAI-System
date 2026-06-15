@@ -56,7 +56,7 @@ app.post(
 "/upload",
 upload.single("image"),
 async (req, res) => {
-    console.log("FILE DATA:", req.file);
+    
 
 
     try {
