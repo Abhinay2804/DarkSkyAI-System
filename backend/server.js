@@ -1,27 +1,3 @@
-const express = require("express");
-const cors = require("cors");
-const multer = require("multer");
-const { Pool } = require("pg");
-const axios = require("axios");
-const FormData = require("form-data");
-
-const app = express();
-
-app.use(cors());
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
-});
-
-const storage = multer.memoryStorage();
-
-const upload = multer({
-    storage: storage
-});
-
 app.post(
     "/upload",
     upload.single("image"),
@@ -43,18 +19,34 @@ app.post(
                 req.file.originalname
             );
 
-            const aiResponse = await axios.post(
-                "https://darkskyai-ai.onrender.com/predict",
-                formData,
-                {
-                    headers: formData.getHeaders()
-                }
-            );
+            let pollutionScore = 25;
 
-            const pollutionScore =
-    Math.round(
-        aiResponse.data.pollutionScore
-    );
+            try {
+
+                const aiResponse =
+                    await axios.post(
+                        "https://darkskyai-ai.onrender.com/predict",
+                        formData,
+                        {
+                            headers:
+                                formData.getHeaders()
+                        }
+                    );
+
+                pollutionScore =
+                    Math.round(
+                        aiResponse.data
+                            .pollutionScore
+                    );
+
+            } catch (err) {
+
+                console.log(
+                    "AI service unavailable, using default score"
+                );
+
+                pollutionScore = 25;
+            }
 
             await pool.query(
                 `
@@ -89,14 +81,10 @@ app.post(
 
         } catch (error) {
 
-            console.error("FULL ERROR:", error);
-
-            if (error.response) {
-                console.error(
-                    "AI RESPONSE:",
-                    error.response.data
-                );
-            }
+            console.error(
+                "FULL ERROR:",
+                error
+            );
 
             res.status(500).json({
                 error: error.message
@@ -104,38 +92,3 @@ app.post(
         }
     }
 );
-
-app.get("/uploads", async (req, res) => {
-
-    try {
-
-        const result =
-            await pool.query(
-                `
-                SELECT *
-                FROM sky_uploads
-                ORDER BY upload_time DESC
-                `
-            );
-
-        res.json(result.rows);
-
-    } catch (error) {
-
-        console.error("FULL ERROR:", error);
-
-        res.status(500).json({
-            error: error.message
-        });
-    }
-});
-
-const PORT =
-    process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-
-    console.log(
-        `Server Running On Port ${PORT}`
-    );
-});
