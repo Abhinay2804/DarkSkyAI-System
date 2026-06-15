@@ -104,23 +104,7 @@ row.insertCell(4).innerHTML =
 row.insertCell(5).innerHTML =
     item.pm25 ?? "N/A";
 
-        row.insertCell(1).innerHTML = lat;
-        row.insertCell(2).innerHTML = lng;
-
-        row.insertCell(3).innerHTML =
-            new Date(
-                item.upload_time
-            ).toLocaleString();
-
-        row.insertCell(4).innerHTML =
-            score;
-
-        row.insertCell(5).innerHTML =
-            item.aqi ?? "N/A";
-
-        row.insertCell(6).innerHTML =
-            item.pm25 ?? "N/A";
-    });
+        
 
     document.getElementById(
         "totalUploads"
