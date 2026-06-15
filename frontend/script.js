@@ -35,9 +35,20 @@ document.getElementById("uploadBtn")
 
     const formData = new FormData();
 
-    formData.append("latitude", userLatitude);
-    formData.append("longitude", userLongitude);
-    formData.append("image", imageFile);
+    formData.append(
+        "latitude",
+        userLatitude
+    );
+
+    formData.append(
+        "longitude",
+        userLongitude
+    );
+
+    formData.append(
+        "image",
+        imageFile
+    );
 
     try {
 
@@ -49,12 +60,17 @@ document.getElementById("uploadBtn")
             }
         );
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
         alert(
             "Upload Successful\n\n" +
-            "Latitude: " + userLatitude +
-            "\nLongitude: " + userLongitude
+            "Pollution Score: " +
+            data.pollutionScore +
+            "\nLatitude: " +
+            userLatitude +
+            "\nLongitude: " +
+            userLongitude
         );
 
         console.log(data);
@@ -62,6 +78,9 @@ document.getElementById("uploadBtn")
     } catch (error) {
 
         console.error(error);
-        alert("Upload Failed");
+
+        alert(
+            "Upload Failed"
+        );
     }
 });
