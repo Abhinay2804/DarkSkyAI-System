@@ -189,10 +189,11 @@ app.get("/prediction", async (req, res) => {
         if (scores.length === 0) {
 
             return res.json({
-                tomorrowPrediction: 0,
-                riskLevel: "No Data",
-                forecast: []
-            });
+    tomorrowPrediction: 0,
+    riskLevel: "No Data",
+    recommendation: "No pollution data available.",
+    forecast: []
+});
 
         }
 
@@ -244,12 +245,60 @@ for (let i = 1; i <= 7; i++) {
     });
 
 }
+let recommendation;
 
+if (riskLevel === "Low") {
+
+    recommendation =
+        "Air quality is good. Outdoor activities are safe.";
+
+}
+else if (riskLevel === "Moderate") {
+
+    recommendation =
+        "Sensitive individuals should reduce prolonged outdoor activities.";
+
+}
+else {
+
+    recommendation =
+        "Avoid outdoor exercise. Wear a mask. Keep windows closed.";
+
+}
         res.json({
-            tomorrowPrediction,
-            riskLevel,
-            forecast
+    tomorrowPrediction,
+    riskLevel,
+    recommendation,
+    forecast
+});
+
+    } catch (error) {
+
+        res.status(500).json({
+            error: error.message
         });
+
+    }
+
+});
+
+app.get("/locations", async (req, res) => {
+
+    try {
+
+        const result =
+            await pool.query(`
+                SELECT
+                    latitude,
+                    longitude,
+                    AVG(pollution_score) AS avg_score
+                FROM sky_uploads
+                GROUP BY latitude, longitude
+                ORDER BY avg_score ASC
+                LIMIT 5
+            `);
+
+        res.json(result.rows);
 
     } catch (error) {
 

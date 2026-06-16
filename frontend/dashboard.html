@@ -140,6 +140,11 @@
     <p id="riskLevel">-</p>
 </div>
 
+<div class="card">
+    <h3>Recommendation</h3>
+    <p id="recommendation">-</p>
+</div>
+
 </div>
 
 <h2>Pollution Map</h2>
@@ -157,6 +162,30 @@
 <div class="chart-container">
     <canvas id="forecastChart"></canvas>
 </div>
+
+<div style="text-align:center; margin:20px;">
+
+<button onclick="downloadReport()">
+
+Download Report
+
+</button>
+
+</div>
+
+<h2>Top Cleanest Locations</h2>
+
+<table id="locationTable">
+
+<tr>
+    <th>Latitude</th>
+    <th>Longitude</th>
+    <th>Average Pollution</th>
+</tr>
+
+</table>
+
+<br>
 
 <h2>Upload Records</h2>
 

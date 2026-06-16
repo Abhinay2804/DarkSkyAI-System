@@ -157,6 +157,11 @@ document.getElementById(
 ).innerText =
     predictionData.riskLevel;
 
+    document.getElementById(
+    "recommendation"
+).innerText =
+    predictionData.recommendation;
+
 const forecastLabels =
     (predictionData.forecast || []).map(
         item => item.day
@@ -247,6 +252,37 @@ if (forecastCtx) {
 
         }
 
+        const locationResponse =
+    await fetch(
+        "https://darkskyai-system.onrender.com/locations"
+    );
+
+const locations =
+    await locationResponse.json();
+
+const locationTable =
+    document.getElementById(
+        "locationTable"
+    );
+
+locations.forEach(location => {
+
+    const row =
+        locationTable.insertRow();
+
+    row.insertCell(0).innerHTML =
+        location.latitude;
+
+    row.insertCell(1).innerHTML =
+        location.longitude;
+
+    row.insertCell(2).innerHTML =
+        Number(
+            location.avg_score
+        ).toFixed(2);
+
+});
+
         setTimeout(() => {
             map.invalidateSize(true);
         }, 2000);
@@ -264,3 +300,48 @@ if (forecastCtx) {
 }
 
 loadData();
+
+function downloadReport() {
+
+    const report = `
+
+DarkSky AI Report
+
+Total Uploads:
+${document.getElementById("totalUploads").innerText}
+
+Average Pollution:
+${document.getElementById("avgPollution").innerText}
+
+Highest Pollution:
+${document.getElementById("highestPollution").innerText}
+
+Tomorrow Prediction:
+${document.getElementById("prediction").innerText}
+
+Risk Level:
+${document.getElementById("riskLevel").innerText}
+
+Recommendation:
+${document.getElementById("recommendation").innerText}
+
+`;
+
+    const blob =
+        new Blob(
+            [report],
+            { type: "text/plain" }
+        );
+
+    const link =
+        document.createElement("a");
+
+    link.href =
+        URL.createObjectURL(blob);
+
+    link.download =
+        "DarkSkyAI_Report.txt";
+
+    link.click();
+
+}
