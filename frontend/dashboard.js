@@ -139,6 +139,24 @@ async function loadData() {
         ).innerText =
             highestPollution;
 
+            const predictionResponse =
+    await fetch(
+        "https://darkskyai-system.onrender.com/prediction"
+    );
+
+const predictionData =
+    await predictionResponse.json();
+
+document.getElementById(
+    "prediction"
+).innerText =
+    predictionData.tomorrowPrediction;
+
+document.getElementById(
+    "riskLevel"
+).innerText =
+    predictionData.riskLevel;
+
         if (markerPoints.length > 0) {
 
             const bounds =
