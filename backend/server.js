@@ -182,25 +182,26 @@ app.get("/prediction", async (req, res) => {
             LIMIT 7
         `);
 
-        const scores =
-    result.rows.map(
-        row => Number(row.pollution_score)
-    );
+        const scores = result.rows.map(
+            row => Number(row.pollution_score)
+        );
 
-if (scores.length === 0) {
+        if (scores.length === 0) {
 
-    return res.json({
-        tomorrowPrediction: 0,
-        riskLevel: "No Data"
-    });
+            return res.json({
+                tomorrowPrediction: 0,
+                riskLevel: "No Data",
+                forecast: []
+            });
 
-}
+        }
 
-const average =
-    scores.reduce(
-        (a, b) => a + b,
-        0
-    ) / scores.length;
+        const average =
+            scores.reduce(
+                (a, b) => a + b,
+                0
+            ) / scores.length;
+
         const tomorrowPrediction =
             Math.round(average);
 
@@ -216,9 +217,23 @@ const average =
             riskLevel = "High";
         }
 
+        const forecast = [];
+
+        for (let i = 1; i <= 7; i++) {
+
+            forecast.push({
+                day: `Day ${i}`,
+                score: Math.round(
+                    tomorrowPrediction + (i - 1)
+                )
+            });
+
+        }
+
         res.json({
             tomorrowPrediction,
-            riskLevel
+            riskLevel,
+            forecast
         });
 
     } catch (error) {

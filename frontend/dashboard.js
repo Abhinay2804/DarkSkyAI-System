@@ -147,7 +147,7 @@ async function loadData() {
 const predictionData =
     await predictionResponse.json();
 
-document.getElementById(
+    document.getElementById(
     "prediction"
 ).innerText =
     predictionData.tomorrowPrediction;
@@ -156,6 +156,53 @@ document.getElementById(
     "riskLevel"
 ).innerText =
     predictionData.riskLevel;
+
+const forecastLabels =
+    (predictionData.forecast || []).map(
+        item => item.day
+    );
+
+const forecastScores =
+    (predictionData.forecast || []).map(
+        item => item.score
+    );
+
+const forecastCtx =
+    document.getElementById(
+        "forecastChart"
+    );
+
+if (forecastCtx) {
+
+    new Chart(forecastCtx, {
+
+        type: "line",
+
+        data: {
+
+            labels: forecastLabels,
+
+            datasets: [
+                {
+                    label: "Predicted Pollution",
+
+                    data: forecastScores,
+
+                    borderWidth: 3,
+
+                    tension: 0.4
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+
+    });
+
+}
 
         if (markerPoints.length > 0) {
 
