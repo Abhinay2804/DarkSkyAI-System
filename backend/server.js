@@ -145,32 +145,89 @@ async (req, res) => {
 
 app.get("/uploads", async (req, res) => {
 
+    try {
 
-try {
+        const result =
+            await pool.query(`
+                SELECT *
+                FROM sky_uploads
+                ORDER BY upload_time DESC
+            `);
 
-    const result =
-        await pool.query(
-            `
-            SELECT *
-            FROM sky_uploads
-            ORDER BY upload_time DESC
-            `
+        res.json(result.rows);
+
+    } catch (error) {
+
+        console.error(
+            "FULL ERROR:",
+            error
         );
 
-    res.json(result.rows);
+        res.status(500).json({
+            error: error.message
+        });
 
-} catch (error) {
+    }
 
-    console.error(
-        "FULL ERROR:",
-        error
+});
+
+app.get("/prediction", async (req, res) => {
+
+    try {
+
+        const result = await pool.query(`
+            SELECT pollution_score
+            FROM sky_uploads
+            ORDER BY upload_time DESC
+            LIMIT 7
+        `);
+
+        const scores =
+    result.rows.map(
+        row => Number(row.pollution_score)
     );
 
-    res.status(500).json({
-        error: error.message
+if (scores.length === 0) {
+
+    return res.json({
+        tomorrowPrediction: 0,
+        riskLevel: "No Data"
     });
+
 }
 
+const average =
+    scores.reduce(
+        (a, b) => a + b,
+        0
+    ) / scores.length;
+        const tomorrowPrediction =
+            Math.round(average);
+
+        let riskLevel;
+
+        if (tomorrowPrediction <= 15) {
+            riskLevel = "Low";
+        }
+        else if (tomorrowPrediction <= 35) {
+            riskLevel = "Moderate";
+        }
+        else {
+            riskLevel = "High";
+        }
+
+        res.json({
+            tomorrowPrediction,
+            riskLevel
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            error: error.message
+        });
+
+    }
 
 });
 
@@ -179,10 +236,8 @@ process.env.PORT || 10000;
 
 app.listen(PORT, () => {
 
-
-console.log(
-    `Server Running On Port ${PORT}`
-);
-
+    console.log(
+        `Server Running On Port ${PORT}`
+    );
 
 });
