@@ -116,14 +116,26 @@ app.post(
 
     } catch (error) {
 
-      console.log(error);
+    console.log("========== ERROR ==========");
 
-      res.status(500).json({
-        error: error.message
-      });
+    console.log("MESSAGE:", error.message);
 
+    if (error.stack) {
+        console.log(error.stack);
     }
-  }
+
+    if (error.response) {
+        console.log("API ERROR:");
+        console.log(error.response.data);
+    }
+
+    console.log("===========================");
+
+    res.status(500).json({
+        error: error.message
+    });
+
+}
 );
 
 app.get("/uploads", async (req, res) => {
