@@ -141,9 +141,9 @@ const locationName =
     } catch (error) {
 
         console.error(
-            "FULL ERROR:",
-            error
-        );
+    "FULL ERROR:",
+    error.response?.data || error.message || error
+);
 
         res.status(500).json({
             error: error.message
