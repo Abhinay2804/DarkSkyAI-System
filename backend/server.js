@@ -100,10 +100,10 @@ async (req, res) => {
             req.file?.path
         );
 
-        
-        const aqiResponse = await axios.get(
-            `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${process.env.OPENWEATHER_API_KEY}`
-        );
+        const aqiResponse =
+            await axios.get(
+                `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${process.env.OPENWEATHER_API_KEY}`
+            );
 
         const aqi =
             aqiResponse.data.list[0].main.aqi;
@@ -117,15 +117,15 @@ async (req, res) => {
         await pool.query(
             `
             INSERT INTO sky_uploads
-(
-    image_url,
-    latitude,
-    longitude,
-    pollution_score,
-    aqi,
-    pm25,
-    location_name
-)
+            (
+                image_url,
+                latitude,
+                longitude,
+                pollution_score,
+                aqi,
+                pm25,
+                location_name
+            )
             VALUES
             (
                 $1,
@@ -153,26 +153,23 @@ async (req, res) => {
                 "Sky Data Uploaded Successfully",
             pollutionScore,
             aqi,
-            pm25
+            pm25,
+            locationName
         });
 
     } catch (error) {
 
-    console.log("========== ERROR ==========");
+        console.log("========== ERROR ==========");
+        console.log(error);
+        console.log(error.message);
+        console.log(error.response?.data);
+        console.log("===========================");
 
-    console.log(error);
+        res.status(500).json({
+            error: error.message
+        });
 
-    console.log(error.message);
-
-    console.log(error.response?.data);
-
-    console.log("===========================");
-
-    res.status(500).json({
-        error: error.message
-    });
-}
-
+    }
 
 });
 
