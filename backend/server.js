@@ -61,28 +61,46 @@ app.post(
 "/upload",
 upload.single("image"),
 async (req, res) => {
-    
-
 
     try {
 
         const latitude = req.body.latitude;
         const longitude = req.body.longitude;
 
-        const locationResponse =
-    await axios.get(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-    );
+        let locationName = "Unknown Location";
 
-const locationName =
-    locationResponse.data.display_name;
+        try {
+
+            const locationResponse =
+                await axios.get(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+                    {
+                        headers: {
+                            "User-Agent": "DarkSkyAI/1.0"
+                        }
+                    }
+                );
+
+            locationName =
+                locationResponse.data.display_name;
+
+        } catch (err) {
+
+            console.log(
+                "Location lookup failed"
+            );
+
+        }
 
         const imageName =
-    req.file.path;
-    console.log(
-    "FILE PATH:",
-    req.file?.path
-);
+            req.file.path;
+
+        console.log(
+            "FILE PATH:",
+            req.file?.path
+        );
+
+        
         const aqiResponse = await axios.get(
             `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${process.env.OPENWEATHER_API_KEY}`
         );
@@ -140,19 +158,23 @@ const locationName =
 
     } catch (error) {
 
-        console.error(
-    "FULL ERROR:",
-    error.response?.data || error.message || error
-);
+    console.log("========== ERROR ==========");
 
-        res.status(500).json({
-            error: error.message
-        });
-    }
+    console.log(error);
+
+    console.log(error.message);
+
+    console.log(error.response?.data);
+
+    console.log("===========================");
+
+    res.status(500).json({
+        error: error.message
+    });
 }
 
 
-);
+});
 
 app.get("/uploads", async (req, res) => {
 
