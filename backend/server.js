@@ -61,6 +61,8 @@ app.post(
   "/upload",
   upload.single("image"),
   async (req, res) => {
+    console.log("UPLOAD REQUEST RECEIVED");
+console.log(req.body);
     try {
 
       const latitude = req.body.latitude;
