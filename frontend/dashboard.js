@@ -99,30 +99,29 @@ async function loadData() {
             const row = table.insertRow();
 
 row.insertCell(0).innerHTML =
-    item.location_name ?? "Unknown";
-
-row.insertCell(1).innerHTML =
     lat;
 
-row.insertCell(2).innerHTML =
+row.insertCell(1).innerHTML =
     lng;
 
-row.insertCell(3).innerHTML =
+row.insertCell(2).innerHTML =
     new Date(
         item.upload_time
     ).toLocaleString();
 
-row.insertCell(4).innerHTML =
+row.insertCell(3).innerHTML =
     score;
 
-row.insertCell(5).innerHTML =
+row.insertCell(4).innerHTML =
     item.aqi ?? "N/A";
 
-row.insertCell(6).innerHTML =
+row.insertCell(5).innerHTML =
     item.pm25 ?? "N/A";
 
-row.insertCell(7).innerHTML =
+row.insertCell(6).innerHTML =
     status;
+
+    });
 
         document.getElementById(
             "totalUploads"

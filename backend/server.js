@@ -58,120 +58,73 @@ const upload = multer({
 });
 
 app.post(
-"/upload",
-upload.single("image"),
-async (req, res) => {
-
+  "/upload",
+  upload.single("image"),
+  async (req, res) => {
     try {
 
-        const latitude = req.body.latitude;
-        const longitude = req.body.longitude;
+      const latitude = req.body.latitude;
+      const longitude = req.body.longitude;
 
-        let locationName = "Unknown Location";
+      const imageName = req.file.path;
 
-        try {
+      const aqiResponse = await axios.get(
+        `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${process.env.OPENWEATHER_API_KEY}`
+      );
 
-            const locationResponse =
-                await axios.get(
-                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
-                    {
-                        headers: {
-                            "User-Agent": "DarkSkyAI/1.0"
-                        }
-                    }
-                );
+      const aqi =
+        aqiResponse.data.list[0].main.aqi;
 
-            locationName =
-                locationResponse.data.display_name;
+      const pm25 =
+        aqiResponse.data.list[0].components.pm2_5;
 
-        } catch (err) {
+      const pollutionScore =
+        Math.round(pm25);
 
-            console.log(
-                "Location lookup failed"
-            );
+      await pool.query(
+        `
+        INSERT INTO sky_uploads
+        (
+          image_url,
+          latitude,
+          longitude,
+          pollution_score,
+          aqi,
+          pm25
+        )
+        VALUES
+        (
+          $1,$2,$3,$4,$5,$6
+        )
+        `,
+        [
+          imageName,
+          latitude,
+          longitude,
+          pollutionScore,
+          aqi,
+          pm25
+        ]
+      );
 
-        }
-
-        const imageName =
-            req.file.path;
-
-        console.log(
-            "FILE PATH:",
-            req.file?.path
-        );
-
-        const aqiResponse =
-            await axios.get(
-                `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${process.env.OPENWEATHER_API_KEY}`
-            );
-
-        const aqi =
-            aqiResponse.data.list[0].main.aqi;
-
-        const pm25 =
-            aqiResponse.data.list[0].components.pm2_5;
-
-        const pollutionScore =
-            Math.round(pm25);
-
-        await pool.query(
-            `
-            INSERT INTO sky_uploads
-            (
-                image_url,
-                latitude,
-                longitude,
-                pollution_score,
-                aqi,
-                pm25,
-                location_name
-            )
-            VALUES
-            (
-                $1,
-                $2,
-                $3,
-                $4,
-                $5,
-                $6,
-                $7
-            )
-            `,
-            [
-                imageName,
-                latitude,
-                longitude,
-                pollutionScore,
-                aqi,
-                pm25,
-                locationName
-            ]
-        );
-
-        res.json({
-            message:
-                "Sky Data Uploaded Successfully",
-            pollutionScore,
-            aqi,
-            pm25,
-            locationName
-        });
+      res.json({
+        message: "Sky Data Uploaded Successfully",
+        pollutionScore,
+        aqi,
+        pm25
+      });
 
     } catch (error) {
 
-        console.log("========== ERROR ==========");
-        console.log(error);
-        console.log(error.message);
-        console.log(error.response?.data);
-        console.log("===========================");
+      console.log(error);
 
-        res.status(500).json({
-            error: error.message
-        });
+      res.status(500).json({
+        error: error.message
+      });
 
     }
-
-});
+  }
+);
 
 app.get("/uploads", async (req, res) => {
 
