@@ -136,6 +136,7 @@ app.post(
     });
 
 }
+  }
 );
 
 app.get("/uploads", async (req, res) => {
