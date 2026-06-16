@@ -219,16 +219,31 @@ app.get("/prediction", async (req, res) => {
 
         const forecast = [];
 
-        for (let i = 1; i <= 7; i++) {
+let trend = 0;
 
-            forecast.push({
-                day: `Day ${i}`,
-                score: Math.round(
-                    tomorrowPrediction + (i - 1)
-                )
-            });
+if (scores.length > 1) {
 
-        }
+    trend =
+        (scores[0] - scores[scores.length - 1]) /
+        (scores.length - 1);
+
+}
+
+for (let i = 1; i <= 7; i++) {
+
+    let predictedScore =
+        tomorrowPrediction + (trend * i);
+
+    if (predictedScore < 0) {
+        predictedScore = 0;
+    }
+
+    forecast.push({
+        day: `Day ${i}`,
+        score: Math.round(predictedScore)
+    });
+
+}
 
         res.json({
             tomorrowPrediction,
