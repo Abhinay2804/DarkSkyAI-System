@@ -69,6 +69,14 @@ async (req, res) => {
         const latitude = req.body.latitude;
         const longitude = req.body.longitude;
 
+        const locationResponse =
+    await axios.get(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+    );
+
+const locationName =
+    locationResponse.data.display_name;
+
         const imageName =
     req.file.path;
     console.log(
@@ -91,14 +99,15 @@ async (req, res) => {
         await pool.query(
             `
             INSERT INTO sky_uploads
-            (
-                image_url,
-                latitude,
-                longitude,
-                pollution_score,
-                aqi,
-                pm25
-            )
+(
+    image_url,
+    latitude,
+    longitude,
+    pollution_score,
+    aqi,
+    pm25,
+    location_name
+)
             VALUES
             (
                 $1,
@@ -106,7 +115,8 @@ async (req, res) => {
                 $3,
                 $4,
                 $5,
-                $6
+                $6,
+                $7
             )
             `,
             [
@@ -115,7 +125,8 @@ async (req, res) => {
                 longitude,
                 pollutionScore,
                 aqi,
-                pm25
+                pm25,
+                locationName
             ]
         );
 
