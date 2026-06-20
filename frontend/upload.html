@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DarkSkyAI Upload</title>
+
+    <link rel="stylesheet" href="upload.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🌍 DarkSkyAI</h1>
+
+    <h2>Sky Image Upload</h2>
+
+    <div class="card">
+
+        <input
+            type="file"
+            id="image"
+            accept="image/*"
+        >
+
+        <br><br>
+
+        <label>
+
+            <input
+                type="radio"
+                name="locationType"
+                value="auto"
+                checked
+            >
+
+            Use My Current Location
+
+        </label>
+
+        <br><br>
+
+        <label>
+
+            <input
+                type="radio"
+                name="locationType"
+                value="manual"
+            >
+
+            Upload for Friend
+
+        </label>
+
+        <br><br>
+
+        <div id="manualLocation" style="display:none;">
+
+            <input
+                type="text"
+                id="latitude"
+                placeholder="Latitude"
+            >
+
+            <br><br>
+
+            <input
+                type="text"
+                id="longitude"
+                placeholder="Longitude"
+            >
+
+        </div>
+
+        <br>
+
+        <button id="uploadBtn">
+
+            Upload Image
+
+        </button>
+
+        <br><br>
+
+        <p id="status">
+
+            Waiting for upload...
+
+        </p>
+
+    </div>
+
+</div>
+
+<script src="upload.js"></script>
+
+</body>
+
+</html>
