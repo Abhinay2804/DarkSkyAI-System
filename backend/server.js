@@ -111,11 +111,14 @@ console.log(req.body);
       );
 
       res.json({
-        message: "Sky Data Uploaded Successfully",
+    success: true,
+    message: "Sky Data Uploaded Successfully",
+    data: {
         pollutionScore,
         aqi,
         pm25
-      });
+    }
+});
 
     } catch (error) {
 
