@@ -114,6 +114,9 @@ console.log(req.body);
     success: true,
     message: "Sky Data Uploaded Successfully",
     data: {
+        image: imageName,
+        latitude,
+        longitude,
         pollutionScore,
         aqi,
         pm25
